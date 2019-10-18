@@ -8,60 +8,91 @@
 #include <iostream>
 #include <string>
 
+
+class Printer{
+    private:
+    public:
+        std::string print(CryptoPP::SecByteBlock info){
+            std::string encoded;
+            
+            encoded.clear();
+            CryptoPP::StringSource(info, info.size(), true,
+                new CryptoPP::HexEncoder(
+                    new CryptoPP::StringSink(encoded)
+                ) 
+            );
+
+            return encoded;
+        }
+
+        std::string print(std::string info){
+            std::string encoded;
+            
+            encoded.clear();
+            CryptoPP::StringSource(info, true,
+                new CryptoPP::HexEncoder(
+                    new CryptoPP::StringSink(encoded)
+                ) 
+            );
+
+            return encoded;
+        }
+};
+
+class Salsa20{
+    private:
+        std::string cipher;
+        std::string recover;
+    public:
+        std::string getCipher(){ return cipher; }
+
+        std::string getRecovered(){ return recover; }
+        
+        void encrypt(std::string plain, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv){
+            CryptoPP::Salsa20::Encryption e;    
+            e.SetKeyWithIV(key, key.size(), iv, iv.size());
+            
+            cipher.resize(plain.size());
+            e.ProcessData(
+                //&cipher[0] is how to get the non-const pointer from a std::string.
+                (CryptoPP::byte*) &cipher[0], (const CryptoPP::byte*)plain.data(), plain.size()
+            );
+        }
+
+        void decrypt(std::string cipher, CryptoPP::SecByteBlock key, CryptoPP::SecByteBlock iv){
+            CryptoPP::Salsa20::Decryption dec;
+            dec.SetKeyWithIV(key, key.size(), iv, iv.size());
+
+            //Perform the decryption
+            recover.resize(cipher.size());
+            dec.ProcessData(
+                (CryptoPP::byte*)&recover[0], (const CryptoPP::byte*)cipher.data(), cipher.size()
+            );
+        }
+};
+
 int main(){
-
     CryptoPP::AutoSeededRandomPool prng;
-    CryptoPP::HexEncoder encoder(
-        new CryptoPP::FileSink(std::cout)
-    );
+    
+    std::string plain("Salsa20 stream cipher test");
+    CryptoPP::SecByteBlock key(16);
+    CryptoPP::SecByteBlock iv(8);
 
-    std::string plain("O cara tentou resolver P = NP será que tá certo?"), cipher, recover;
-
-    CryptoPP::SecByteBlock key(16), iv(8);
     prng.GenerateBlock(key, key.size());
     prng.GenerateBlock(iv, iv.size());
 
-    std::cout << "Key: ";
-    encoder.Put((const CryptoPP::byte*)key.data(), key.size());
-    encoder.MessageEnd();
-    std::cout << std::endl;
-
-    std::cout << "IV: ";
-    encoder.Put((const CryptoPP::byte*)iv.data(), iv.size());
-    encoder.MessageEnd();
-    std::cout << std::endl;
-
-    // Encryption object
-    CryptoPP::Salsa20::Encryption enc;    
-    enc.SetKeyWithIV(key, key.size(), iv, iv.size());
-
-    /*  Perform the encryption
-        Using Salsa20::Encryption and Salsa20::Decryption. 
-        &cipher[0] is how to get the non-const pointer from a std::string. */
+    Printer pt;
+    std::cout << "key: " << pt.print(key) << std::endl;
+    std::cout << "iv: " << pt.print(iv) << std::endl;
     
-    cipher.resize(plain.size());
-    enc.ProcessData(
-        (CryptoPP::byte*)&cipher[0], (const CryptoPP::byte*)plain.data(), plain.size()
-    );
+    Salsa20 salsa;
+    salsa.encrypt(plain, key, iv);
 
     std::cout << "Plain: " << plain << std::endl;
 
-    std::cout << "Cipher: ";
+    std::cout << "Cipher: " << pt.print(salsa.getCipher()) << std::endl;
 
-    encoder.Put((const CryptoPP::byte*)cipher.data(), cipher.size());
-    encoder.MessageEnd();
-    std::cout << std::endl;
-
-    CryptoPP::Salsa20::Decryption dec;
-    dec.SetKeyWithIV(key, key.size(), iv, iv.size());
-
-    // Perform the decryption
-    recover.resize(cipher.size());
-    dec.ProcessData(
-        (CryptoPP::byte*)&recover[0], (const CryptoPP::byte*)cipher.data(), cipher.size()
-    );
-
-    std::cout << "Recovered: " << recover << std::endl;
-
+    salsa.decrypt(salsa.getCipher(), key, iv);
+    std::cout << "Recovered: " << salsa.getRecovered() << std::endl;
     return 0;
 }
