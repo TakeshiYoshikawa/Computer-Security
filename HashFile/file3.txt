@@ -1,0 +1,38 @@
+RUP (Rational Unified Process)
+
+-> Blocos de construção: Descreve o que deve ser construído e explicação passo-a-passo de soluções para 
+objetivos específicos. Divide-se em:
+- Papel (role): Define um conjunto de habilidades relevantes, competências e responsabilidades.
+- Produtos de trabalho: Produto resultante de uma tarefa, documentos, modelos e quaisquer outros 
+artefatos utilizados no processo.
+- Tarefas: Junção de uma tarefa com uma pessoa responsável (role) que provêm um resultado relevante.
+
+
+-> Fases de vida do RUP
+--> Inception (Inicialização): Analisa o escopo do sistema como base para construção de custos e 
+orçamentos do projeto. Regras de Negócio, Fatores de sucesso e Previsão Financeira são realizadas nessa
+fase. Dentro dessa fase, há metas de objetivo do ciclo de vida do projeto:
+
+---> As opiniões conflitantes entre os envolvidos (stakeholders) definem os custos e cronograma.
+---> Requirimentos fiéis as definições de casos de uso (UML).
+---> Credibilidade do custo, orçamento, prioridades, riscos e desenvolvimento.
+---> Entendimento da escala arquitetônica do projeto (Comprimento + Largura).
+---> Estabelecer a comparação entre os gastos planejados e os reais. 
+
+Se essas metas não forem atendidas, poderá resultar em cancelamento, repetição ou redefinição do 
+planejamento até atender as metas.
+
+- Elaboration (Elaboração)
+--> Mitigar os pontos de risco identificados até o final dessa fase. Nesta fase é realizado a análise 
+do domínio do problema e é arquitetado a forma básica do projeto. Alguns eventos de elaboração incluem:
+
+---> Maturar o modelo de Casos de Uso, completude de 80%.
+---> Descrição da arquitetura do software no processo de desenvolvimento.
+---> Arquitetura que executa os pontos essenciais dos casos de uso.
+---> Confecção de listas de risco e casos de negócio.
+---> Planejar o desenvolvimento do projeto.
+---> Protótipos que evidenciam cada risco técnico.
+---> Criação de manual do usuário (opcional).
+
+- Construction (Construção)
+- Transition (Transição)
